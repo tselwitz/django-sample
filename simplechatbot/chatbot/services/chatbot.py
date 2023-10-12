@@ -31,7 +31,6 @@ class DevBot(ChatBot):
     Other industrial countries at minimum maintain their output, while America 
     suffers an increasingly serious decline in the number of engineering graduates 
     and a lack of well-educated engineers."""
-        self.name = self.name
 
     def __call__(self, query):
         if isinstance(query, list):
