@@ -32,7 +32,6 @@ def conversation(request):
         conversation_id = request.GET.get("conversation_id")
         if conversation_id is None:
             raise KeyError
-        print(conversation_id)
     except KeyError:
         return HttpResponseBadRequest("Not provided: conversation_id")
     query = list(
@@ -46,7 +45,6 @@ def conversation(request):
 @require_http_methods(["POST"])
 def ask(request):
     body = body_to_json(request)
-    print(body)
     try:
         query_text = body["query_text"]
         if query_text is None:
@@ -64,12 +62,11 @@ def ask(request):
         conversation_id = uuid4()
         conversation = [{"role": "user", "content": query_text}]
     response = chatbot(conversation)
-    response = "Hello!"
     query = Query(
         query_text=query_text,
         pub_date=timezone.now(),
         response=response,
-        model="Test",
+        model=chatbot.name,
         conversation_id=conversation_id,
     )
     query.save()

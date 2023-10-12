@@ -34,8 +34,10 @@ class DevBot(ChatBot):
         self.name = self.name
 
     def __call__(self, query):
+        if isinstance(query, list):
+            query = query[0]
         return self.model(
-            question=query,
+            question=query["content"],
             context=self.context,
         )["answer"]
 
@@ -43,7 +45,6 @@ class DevBot(ChatBot):
 class ProdBot(ChatBot):
     def __init__(self, model):
         super().__init__()
-        print(model)
         self.model = AutoModelForCausalLM.from_pretrained(model)
         self.tokenizer = AutoTokenizer.from_pretrained(model, trust_remote_code=False)
         self.name = model
