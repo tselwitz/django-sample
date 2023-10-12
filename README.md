@@ -38,6 +38,7 @@ $ deactivate
 
 ```
  > GET /chatbot # Test Route
-
+ > GET /chatbot/conversation?conversation_id=${UUID} <- Retrieve the contents of a conversation with that UUID
  > POST /chatbot/ask # Takes a question in the request and replies with an answer.
+
 ```
