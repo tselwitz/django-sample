@@ -35,7 +35,7 @@ def conversation(request):
     except KeyError:
         return HttpResponseBadRequest("Not provided: conversation_id")
     query = list(
-        Query.objects.filter(conversation_id=UUID(conversation_id).hex)
+        Query.objects.filter(conversation_id=UUID(str(conversation_id)))
         .order_by("pub_date")
         .values()
     )

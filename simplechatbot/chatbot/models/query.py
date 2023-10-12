@@ -7,7 +7,7 @@ from uuid import uuid4
 class Query(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4)
     query_text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField("date published")
+    pub_date = models.DateTimeField(default=timezone.now)
     response = models.CharField(max_length=1000)
     model = models.CharField(max_length=100)
     conversation_id = models.UUIDField(primary_key=False, default=uuid4)
