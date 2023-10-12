@@ -5,13 +5,14 @@ import torch
 class ChatBot:
     def __init__(self):
         self.device = (
-            "cuda" if torch.cuda.is_available else "cpu"
+            "cuda" if torch.cuda.is_available() else "cpu"
         )  # the device to load the model onto
 
 
 class DevBot(ChatBot):
     def __init__(self):
-        self.model = pipeline("question-answering")
+        self.name = "question-answering"
+        self.model = pipeline(self.name)
         self.context = """America has changed dramatically during recent years. Not only has the number of 
     graduates in traditional engineering disciplines such as mechanical, civil, 
     electrical, chemical, and aeronautical engineering declined, but in most of 
@@ -30,7 +31,7 @@ class DevBot(ChatBot):
     Other industrial countries at minimum maintain their output, while America 
     suffers an increasingly serious decline in the number of engineering graduates 
     and a lack of well-educated engineers."""
-        self.name = "HuggingFaceQuestionAnsweringPipeline"
+        self.name = self.name
 
     def __call__(self, query):
         return self.model(
@@ -42,20 +43,22 @@ class DevBot(ChatBot):
 class ProdBot(ChatBot):
     def __init__(self, model):
         super().__init__()
+        print(model)
         self.model = AutoModelForCausalLM.from_pretrained(model)
-        self.tokenizer = AutoTokenizer.from_pretrained(model)
+        self.tokenizer = AutoTokenizer.from_pretrained(model, trust_remote_code=False)
         self.name = model
 
     def __call__(self, query):
-        messages = [{"role": "user", "content": query}]
-
+        messages = query
         encodeds = self.tokenizer.apply_chat_template(messages, return_tensors="pt")
-
         model_inputs = encodeds.to(self.device)
         self.model.to(self.device)
 
         generated_ids = self.model.generate(
-            model_inputs, max_new_tokens=1000, do_sample=True
+            model_inputs,
+            max_new_tokens=1000,
+            do_sample=True,
         )
+
         decoded = self.tokenizer.batch_decode(generated_ids)
         return decoded[0]
